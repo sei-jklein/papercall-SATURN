@@ -20,9 +20,9 @@ reviewers = []
 Papercall.all.each do |submission|
   ratings = submission['ratings']
   ratings.each do |review|
-    # each element is an array [name, event count]. This sets us up to use
+    # each element is an array [name, event count, last event date]. This sets us up to use
     # assoc later on the name
-    reviewers << [review['user']['name'].partition(' ')[2], 0]
+    reviewers << [review['user']['name'].partition(' ')[2], 0, 0]
   end
 
   feedback = submission['feedback']
@@ -73,13 +73,16 @@ reviewer_events.each do |event|
   histogram[h_ind][:count] = (histogram[h_ind][:count]).to_i + 1
   r_ind = reviewers.find_index { |r| r[0] == event[:name] }
   reviewers[r_ind][1] = (reviewers[r_ind][1]).to_i + 1
+  reviewers[r_ind][2] = event[:day]
 end
 
 puts 'Date, # of reviewer feedback events'
 histogram.each do |h|
   puts h[:date].to_s << '    ' << h[:count].to_s
 end
-puts 'Reviewer , # of feedback messages sent'
+
+reviewers.sort! { |x, y| y[2] <=> x[2] }
+puts 'Reviewer , # of feedback messages sent, date of last event'
 reviewers.each do |r|
-  puts r[0].to_s << ' : ' << r[1].to_s
+  puts r[0].to_s.ljust(12) << ' : ' << r[1].to_s.ljust(5) << ' : ' << Date.jd(r[2]).strftime('%F').to_s
 end
