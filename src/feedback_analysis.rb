@@ -6,6 +6,14 @@ require 'yaml'
 
 pc_conf = YAML::load_file('conf/pc.conf')
 
+reviewers = []
+File.read('conf/reviewers.txt').each_line {|line|
+    # each element is an array [name, event count, last event date]. This sets us up to use
+    # assoc later on the name
+    # the slice is to remove the trailing "\n"
+    reviewers << [line.partition(' ')[2].to_s.slice(0..-2), 0, Date.new(1970,1,1).jd]
+}
+
 Papercall.fetch(:from_papercall,
                 pc_conf["api_key"],
                 :submitted,
@@ -15,15 +23,14 @@ Papercall.fetch(:from_papercall,
                 :declined)
 
 feedback_events = []
-reviewers = []
 
 Papercall.all.each do |submission|
-  ratings = submission['ratings']
-  ratings.each do |review|
-    # each element is an array [name, event count, last event date]. This sets us up to use
-    # assoc later on the name
-    reviewers << [review['user']['name'].partition(' ')[2], 0, 0]
-  end
+#   ratings = submission['ratings']
+#   ratings.each do |review|
+#     # each element is an array [name, event count, last event date]. This sets us up to use
+#     # assoc later on the name
+#     reviewers << [review['user']['name'].partition(' ')[2], 0, Date.new(1970,1,1).jd]
+#   end
 
   feedback = submission['feedback']
   feedback.each do |event|
@@ -43,6 +50,8 @@ reviewer_events = []
 submitter_events = []
 
 feedback_events.each do |event|
+  # Note that some of the submissions may have an empty name. We assume
+  # that none of the reviewers have an empty name in their profile.
   if reviewers.assoc(event[:name]).nil? then submitter_events << event
   else reviewer_events << event
   end
