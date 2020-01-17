@@ -45,7 +45,7 @@ do_action() {
             exit 2
         ;;
     esac
-    docker run -v "$(pwd)":/app saturn_papercall /bin/bash -c "cd /app; ruby -E 'UTF-8' ./src/$ruby_script"
+    docker run -v "$(pwd)":/saturn saturn_papercall /bin/bash -c "cd /app; ruby -E 'UTF-8' ./src/$ruby_script"
 }
 
 base_path=$(dirname $(realpath_osx $0))

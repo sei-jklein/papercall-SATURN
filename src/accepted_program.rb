@@ -36,4 +36,4 @@ abbr_submissions.each do |submission|
 	outstring << submission[:bio].to_s.gsub(/\r/,"") << EOL << "==========================================" << EOL
 end
 
-File.write("accepted_talks-" + Date.today.to_s + ".txt", outstring)
+File.write("/saturn/accepted_talks-" + Date.today.to_s + ".txt", outstring)

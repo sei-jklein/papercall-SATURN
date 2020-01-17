@@ -38,4 +38,4 @@ submitters.each do |submitter|
 	       submitter[:email].to_s  << "\n"
 end
 
-File.write("decision_notification-" + Date.today.to_s + ".tsv", tsv)
+File.write("/saturn/decision_notification-" + Date.today.to_s + ".tsv", tsv)

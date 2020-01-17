@@ -48,4 +48,4 @@ abbr_submissions.each do |submission|
     submission[:link] << EOL
 end
 
-File.write(Date.today.to_s + '.tsv', tsv)
+File.write('/saturn/' + Date.today.to_s + '.tsv', tsv)

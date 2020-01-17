@@ -41,4 +41,4 @@ abbr_submissions.each do |submission|
     submission[:abstract].to_s.gsub(/\r/,"") << EOL << EOL << EOL
 end
 
-File.write('elevator_pitches-' + Date.today.to_s + '.tsv', tsv)
+File.write('/saturn/elevator_pitches-' + Date.today.to_s + '.tsv', tsv)

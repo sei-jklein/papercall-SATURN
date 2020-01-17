@@ -15,9 +15,12 @@ First, make the script executable.
 chmod +x saturn.sh
 ```
 
-Then, edit the conf/pc.conf file. Fill in your PaperCall API key and add your PaperCall
+Next, edit the conf/pc.conf file. Fill in your PaperCall API key and add your PaperCall
 event number to the link prefix. (We use the link prefix to build a clickable link
 from the submission IDs.)
+
+Finally, create a list of reviewers in conf/reviewers.txt. One name per line, and
+make sure that each name exactly matches the reviewer's name in their PaperCall profile. The scripts use UTF-8 encoding, in case you have names with non-ASCII characters.
 
 Then build the container (just once).
 

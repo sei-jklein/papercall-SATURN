@@ -33,4 +33,4 @@ submitters.each do |submitter|
 	       submitter[:email].to_s  << "\n"
 end
 
-File.write("submitter_emails-" + Date.today.to_s + ".tsv", tsv)
+File.write("/saturn/submitter_emails-" + Date.today.to_s + ".tsv", tsv)

@@ -84,4 +84,4 @@ abbr_submissions.each do |submission|
     n += 1
 end
 
-File.write('review-status-' + Date.today.to_s + '.tsv', tsv)
+File.write('/saturn/review-status-' + Date.today.to_s + '.tsv', tsv)
