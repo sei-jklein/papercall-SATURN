@@ -11,7 +11,7 @@ File.read('conf/reviewers.txt').each_line {|line|
     # each element is an array [name, event count, last event date]. This sets us up to use
     # assoc later on the name
     # the slice is to remove the trailing "\n"
-    reviewers << [line.partition(' ')[2].to_s.slice(0..-2), 0, Date.new(1970,1,1).jd]
+    reviewers << [line.partition(' ')[2].to_s.slice(0..-2), 0, Date.new(1970,1,1).jd, 0, Date.new(1970,1,1).jd]
 }
 
 Papercall.fetch(:from_papercall,
@@ -23,6 +23,7 @@ Papercall.fetch(:from_papercall,
                 :declined)
 
 feedback_events = []
+rating_events = []
 
 Papercall.all.each do |submission|
 #   ratings = submission['ratings']
@@ -40,10 +41,18 @@ Papercall.all.each do |submission|
       name: event['user']['name'].partition(' ')[2]
     }
   end
+
+  ratings = submission['ratings']
+  ratings.each do |event|
+    # save the user last name and Julian day of the last update
+    rating_events << {
+        day: DateTime.parse(event['updated_at']).jd, \
+        name: event['user']['name'].partition(' ')[2]
+    }
+  end
 end
 
 reviewers.uniq!
-reviewers.sort! { |x, y| x[0] <=> y[0] }
 puts 'Unique reviewers: ' << reviewers.length.to_s
 
 reviewer_events = []
@@ -77,10 +86,12 @@ histogram.each_index do |i|
   day += 1
 end
 
+# we have reviewers from Scandanavia so we need to pay attention to encoding
+# since PaperCall escapes non-ASCII characters
 reviewer_events.each do |event|
   h_ind = event[:rday]
   histogram[h_ind][:count] = (histogram[h_ind][:count]).to_i + 1
-  r_ind = reviewers.find_index { |r| r[0] == event[:name] }
+  r_ind = reviewers.find_index { |r| r[0] == event[:name].encode('utf-8') }
   reviewers[r_ind][1] = (reviewers[r_ind][1]).to_i + 1
   reviewers[r_ind][2] = event[:day]
 end
@@ -94,4 +105,19 @@ reviewers.sort! { |x, y| y[2] <=> x[2] }
 puts 'Reviewer , # of feedback messages sent, date of last event'
 reviewers.each do |r|
   puts r[0].to_s.ljust(12) << ' : ' << r[1].to_s.ljust(5) << ' : ' << Date.jd(r[2]).strftime('%F').to_s
+end
+
+# And now handle the ratings events
+# we have reviewers from Scandanavia so we need to pay attention to encoding
+# since PaperCall escapes non-ASCII characters
+rating_events.each do |event|
+  r_ind = reviewers.find_index { |r| r[0].to_s == event[:name].encode('UTF-8') }
+  reviewers[r_ind][3] = (reviewers[r_ind][3]).to_i + 1
+  reviewers[r_ind][4] = event[:day]
+end
+
+reviewers.sort! { |x, y| y[3] <=> x[3] }
+puts 'Reviewer , # of ratings completed, date of last event'
+reviewers.each do |r|
+  puts r[0].to_s.ljust(12) << ' : ' << r[3].to_s.ljust(5) << ' : ' << Date.jd(r[4]).strftime('%F').to_s
 end
