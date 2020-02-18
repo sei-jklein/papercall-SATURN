@@ -26,13 +26,6 @@ feedback_events = []
 rating_events = []
 
 Papercall.all.each do |submission|
-#   ratings = submission['ratings']
-#   ratings.each do |review|
-#     # each element is an array [name, event count, last event date]. This sets us up to use
-#     # assoc later on the name
-#     reviewers << [review['user']['name'].partition(' ')[2], 0, Date.new(1970,1,1).jd]
-#   end
-
   feedback = submission['feedback']
   feedback.each do |event|
     # save user last name and Julian day of the event
