@@ -40,6 +40,9 @@ do_action() {
         "abstracts")
             ruby_script="elevator_pitch.rb"
         ;;
+        "json")
+            ruby_script="get_json.rb"
+        ;;
         *)
             printf "Unknown PaperCall action\n"
             exit 2
